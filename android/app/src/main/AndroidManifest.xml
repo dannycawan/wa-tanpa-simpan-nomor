@@ -7,7 +7,7 @@
 
     <application
         android:label="WA Tanpa Simpan Nomor"
-        android:name="${applicationName}"
+        android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher">
 
         <!-- ✅ AdMob App ID -->
