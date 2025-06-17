@@ -4,9 +4,9 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// ✅ Ambil dari flutter.gradle via project.property
-val flutterVersionCode = project.property("flutter.versionCode") as String
-val flutterVersionName = project.property("flutter.versionName") as String
+// ✅ Ganti manual version code dan version name
+val flutterVersionCode = 1
+val flutterVersionName = "1.0.0"
 
 android {
     namespace = "com.wa.tanpa.simpan.nomor"
@@ -27,7 +27,7 @@ android {
         applicationId = "com.wa.tanpa.simpan.nomor"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutterVersionCode.toInt()
+        versionCode = flutterVersionCode
         versionName = flutterVersionName
     }
 
