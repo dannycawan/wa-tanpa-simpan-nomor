@@ -4,8 +4,11 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// ✅ Ambil dari flutter.gradle via project.property
+val flutterVersionCode = project.property("flutter.versionCode") as String
+val flutterVersionName = project.property("flutter.versionName") as String
+
 android {
-    // ✅ Ganti namespace sesuai package name target
     namespace = "com.wa.tanpa.simpan.nomor"
 
     compileSdk = flutter.compileSdkVersion
@@ -21,18 +24,15 @@ android {
     }
 
     defaultConfig {
-        // ✅ Ganti applicationId sesuai package name yang akan dipakai di Play Store
         applicationId = "com.wa.tanpa.simpan.nomor"
-
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        versionCode = flutterVersionCode.toInt()
+        versionName = flutterVersionName
     }
 
     buildTypes {
         release {
-            // Gunakan debug signing config untuk sementara
             signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
             isShrinkResources = false
