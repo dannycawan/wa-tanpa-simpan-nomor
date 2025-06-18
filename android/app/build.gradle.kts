@@ -4,7 +4,7 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Versi manual
+// Versi aplikasi
 val flutterVersionCode = 1
 val flutterVersionName = "1.0.0"
 
@@ -33,9 +33,17 @@ android {
 
     buildTypes {
         release {
+            // Ganti ini jika nanti sudah punya signing config production
             signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
             isShrinkResources = false
+        }
+    }
+
+    // Opsional: mencegah error pada Android 12+ (jika pakai intent WA)
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 }

@@ -17,8 +17,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Locale _locale = const Locale('id');
-  late InterstitialAd? _interstitialAd;
-  bool _isInterstitialAdReady = false;
 
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
@@ -31,7 +29,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadBannerAds();
-    _loadInterstitialAd();
   }
 
   void _loadBannerAds() {
@@ -50,41 +47,32 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     )..load();
   }
 
-  void _loadInterstitialAd() {
-    InterstitialAd.load(
-      adUnitId: 'ca-app-pub-6721734106426198/8389554469',
-      request: const AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          _interstitialAd = ad;
-          _isInterstitialAdReady = true;
-        },
-        onAdFailedToLoad: (error) {
-          _isInterstitialAdReady = false;
-        },
-      ),
-    );
-  }
-
   void _switchLanguage(String lang) {
     setState(() {
       _locale = Locale(lang);
     });
   }
 
-  String t(String id, {String? lang}) {
+  String t(String id) {
     final translations = {
+      'app_title': {
+        'id': 'WA Tanpa Simpan Nomor',
+        'en': 'WA Without Save Number',
+      },
       'select_language': {'id': 'Pilih Bahasa', 'en': 'Select Language'},
       'enter_number': {'id': 'Masukkan nomor WA', 'en': 'Enter WA number'},
+      'example_number': {
+        'id': 'Contoh: 6281234567890 (Indonesia), 60123456789 (Malaysia)',
+        'en': 'Example: 6281234567890 (Indonesia), 60123456789 (Malaysia)',
+      },
       'enter_message': {'id': 'Tulis pesan Anda', 'en': 'Write your message'},
       'send_to_wa': {'id': 'Kirim ke WA', 'en': 'Send to WA'},
       'empty_number': {
         'id': 'Nomor tidak boleh kosong!',
         'en': 'Number cannot be empty!'
       },
-      'opening_wa': {'id': 'Membuka WA...', 'en': 'Opening WA...'},
+      'opening_wa': {'id': 'Membuka WA...', 'en': 'Opening WhatsApp...'},
     };
-
     return translations[id]?[_locale.languageCode] ?? id;
   }
 
@@ -101,11 +89,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     final url = 'https://wa.me/$phone?text=$message';
 
-    if (_isInterstitialAdReady) {
-      _interstitialAd?.show();
-      _loadInterstitialAd();
-    }
-
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(t('opening_wa')),
     ));
@@ -121,7 +104,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void dispose() {
     _topBannerAd?.dispose();
     _bottomBannerAd?.dispose();
-    _interstitialAd?.dispose();
     _phoneController.dispose();
     _messageController.dispose();
     WidgetsBinding.instance.removeObserver(this);
@@ -129,24 +111,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && _isInterstitialAdReady) {
-      _interstitialAd?.show();
-      _loadInterstitialAd();
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'WA Tanpa Simpan Nomor',
+      title: t('app_title'),
       locale: _locale,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.green[700],
-          title: const Text('WA Tanpa Simpan Nomor'),
+          title: Text(t('app_title')),
           actions: [
             DropdownButton<String>(
               value: _locale.languageCode,
@@ -157,8 +131,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 if (lang != null) _switchLanguage(lang);
               },
               items: const [
-                DropdownMenuItem(value: 'id', child: Text('🇮🇩 ID')),
-                DropdownMenuItem(value: 'en', child: Text('🇺🇸 EN')),
+                DropdownMenuItem(value: 'id', child: Text('???? ID')),
+                DropdownMenuItem(value: 'en', child: Text('???? EN')),
               ],
             )
           ],
@@ -177,6 +151,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
                         labelText: t('enter_number'),
+                        hintText: t('example_number'),
                         border: const OutlineInputBorder(),
                       ),
                     ),

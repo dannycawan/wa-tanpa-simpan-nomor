@@ -1,8 +1,10 @@
 name: wa_tanpa_simpan_nomor
 description: A simple Flutter app to send WA messages without saving number.
 
+# Aplikasi ini tidak diterbitkan ke pub.dev
 publish_to: 'none'
 
+# Versi aplikasi: major.minor.patch+build
 version: 1.0.0+1
 
 environment:
@@ -11,8 +13,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # Ikon iOS-style
   cupertino_icons: ^1.0.2
+
+  # Google AdMob SDK untuk banner ads (tidak pakai interstitial)
   google_mobile_ads: ^4.0.0
+
+  # Untuk buka WhatsApp via intent URL
   url_launcher: ^6.2.6
 
 dev_dependencies:
