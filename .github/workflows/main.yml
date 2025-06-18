@@ -1,4 +1,4 @@
-name: Build APK Flutter
+name: Build Flutter APK
 
 on:
   push:
@@ -7,24 +7,26 @@ on:
 
 jobs:
   build:
+    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.1'  # ✅ Versi baru yang kompatibel dengan Dart 3.4.0
+          flutter-version: '3.19.6' # ganti dengan versi yang kamu pakai jika berbeda
 
-      - name: Get dependencies
+      - name: Install dependencies
         run: flutter pub get
 
-      - name: Build APK release
+      - name: Build APK
         run: flutter build apk --release
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-release.apk
+          name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
