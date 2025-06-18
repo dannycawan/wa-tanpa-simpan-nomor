@@ -33,17 +33,29 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   void _loadBannerAds() {
     _topBannerAd = BannerAd(
-      adUnitId: 'ca-app-pub-6721734106426198/3033200286',
+      adUnitId: 'ca-app-pub-6721734106426198/3033200286', // AdMob Asli
       size: AdSize.banner,
       request: const AdRequest(),
-      listener: const BannerAdListener(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) => print('Top Banner Ad Loaded'),
+        onAdFailedToLoad: (ad, error) {
+          print('Top Banner Ad Failed: $error');
+          ad.dispose();
+        },
+      ),
     )..load();
 
     _bottomBannerAd = BannerAd(
-      adUnitId: 'ca-app-pub-6721734106426198/3033200286',
+      adUnitId: 'ca-app-pub-6721734106426198/3033200286', // AdMob Asli
       size: AdSize.banner,
       request: const AdRequest(),
-      listener: const BannerAdListener(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) => print('Bottom Banner Ad Loaded'),
+        onAdFailedToLoad: (ad, error) {
+          print('Bottom Banner Ad Failed: $error');
+          ad.dispose();
+        },
+      ),
     )..load();
   }
 
@@ -69,7 +81,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       'send_to_wa': {'id': 'Kirim ke WA', 'en': 'Send to WA'},
       'empty_number': {
         'id': 'Nomor tidak boleh kosong!',
-        'en': 'Number cannot be empty!'
+        'en': 'Number cannot be empty!',
       },
       'opening_wa': {'id': 'Membuka WA...', 'en': 'Opening WhatsApp...'},
     };
@@ -77,28 +89,34 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> _launchWA() async {
-    final phone = _phoneController.text.trim();
-    final message = Uri.encodeComponent(_messageController.text.trim());
+    String rawPhone = _phoneController.text.trim().replaceAll(RegExp(r'\D'), '');
 
-    if (phone.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(t('empty_number')),
-      ));
+    if (rawPhone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(t('empty_number'))),
+      );
       return;
     }
 
+    // Format nomor: jika mulai dari 0, ubah ke 62 (Indonesia)
+    final phone = rawPhone.startsWith('0')
+        ? '62${rawPhone.substring(1)}'
+        : rawPhone;
+
+    final message = Uri.encodeComponent(_messageController.text.trim());
     final url = 'https://api.whatsapp.com/send?phone=$phone&text=$message';
+    final uri = Uri.parse(url);
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(t('opening_wa')),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(t('opening_wa'))),
+    );
 
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Gagal membuka WhatsApp'),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal membuka WhatsApp')),
+      );
     }
   }
 
