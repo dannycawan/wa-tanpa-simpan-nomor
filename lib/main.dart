@@ -62,8 +62,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       'select_language': {'id': 'Pilih Bahasa', 'en': 'Select Language'},
       'enter_number': {'id': 'Masukkan nomor WA', 'en': 'Enter WA number'},
       'example_number': {
-        'id': 'Contoh: 6281234567890 (Indonesia), 60123456789 (Malaysia)',
-        'en': 'Example: 6281234567890 (Indonesia), 60123456789 (Malaysia)',
+        'id': 'Contoh: 6281234567890 (tanpa + atau 0 di depan)',
+        'en': 'Example: 15551234567 (no + or leading 0)',
       },
       'enter_message': {'id': 'Tulis pesan Anda', 'en': 'Write your message'},
       'send_to_wa': {'id': 'Kirim ke WA', 'en': 'Send to WA'},
@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future<void> _launchWA() async {
     final phone = _phoneController.text.trim();
-    final message = Uri.encodeComponent(_messageController.text);
+    final message = Uri.encodeComponent(_messageController.text.trim());
 
     if (phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -87,7 +87,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       return;
     }
 
-    final url = 'https://wa.me/$phone?text=$message';
+    final url = 'https://api.whatsapp.com/send?phone=$phone&text=$message';
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(t('opening_wa')),
@@ -96,7 +96,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     } else {
-      throw 'Could not launch $url';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Gagal membuka WhatsApp'),
+      ));
     }
   }
 
@@ -131,8 +133,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 if (lang != null) _switchLanguage(lang);
               },
               items: const [
-                DropdownMenuItem(value: 'id', child: Text('???? ID')),
-                DropdownMenuItem(value: 'en', child: Text('???? EN')),
+                DropdownMenuItem(value: 'id', child: Text('🇮🇩 ID')),
+                DropdownMenuItem(value: 'en', child: Text('🇺🇸 EN')),
               ],
             )
           ],
