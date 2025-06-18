@@ -11,8 +11,8 @@ val flutterVersionName = "1.0.0"
 android {
     namespace = "com.wa.tanpa.simpan.nomor"
 
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdk = 34
+    ndkVersion = "25.2.9519653"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -25,8 +25,9 @@ android {
 
     defaultConfig {
         applicationId = "com.wa.tanpa.simpan.nomor"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+
+        minSdk = 21
+        targetSdk = 34
         versionCode = flutterVersionCode
         versionName = flutterVersionName
     }
