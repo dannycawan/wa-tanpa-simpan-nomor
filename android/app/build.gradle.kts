@@ -4,7 +4,7 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// ✅ Ganti manual version code dan version name
+// Versi manual
 val flutterVersionCode = 1
 val flutterVersionName = "1.0.0"
 
@@ -25,7 +25,6 @@ android {
 
     defaultConfig {
         applicationId = "com.wa.tanpa.simpan.nomor"
-
         minSdk = 21
         targetSdk = 34
         versionCode = flutterVersionCode

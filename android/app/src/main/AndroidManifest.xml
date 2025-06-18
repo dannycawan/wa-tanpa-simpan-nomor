@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.wa.tanpa.simpan.nomor">
 
-    <!-- Izin akses internet dan jaringan -->
+    <!-- Izin akses internet & jaringan -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -42,7 +42,7 @@
             android:value="2" />
     </application>
 
-    <!-- WA Launch support (jika ingin integrasi dengan intent text) -->
+    <!-- Untuk intent teks dan WhatsApp -->
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT" />
