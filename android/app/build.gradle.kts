@@ -12,7 +12,7 @@ android {
     namespace = "com.wa.tanpa.simpan.nomor"
 
     compileSdk = 34
-    ndkVersion = "25.2.9519653"
+    ndkVersion = "27.0.12077973" // ✅ UPDATE SESUAI PERMINTAAN BUILDER
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
