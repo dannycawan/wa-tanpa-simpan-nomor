@@ -7,36 +7,23 @@ on:
 
 jobs:
   build:
-    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.1'  # ✅ Versi Flutter yang sesuai dengan Dart 3.4.x
+          flutter-version: '3.19.6'
 
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v3
+      - run: flutter pub get
+
+      # Tambahkan langkah generate icon
+      - run: flutter pub run flutter_launcher_icons:main
+
+      - run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
         with:
-          path: |
-            ~/.pub-cache
-            .dart_tool
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Build APK
-        run: flutter build apk --release
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-apk
+          name: wa-tanpa-simpan-nomor-apk
           path: build/app/outputs/flutter-apk/app-release.apk
