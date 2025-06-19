@@ -22,8 +22,13 @@ class _MyAppState extends State<MyApp> {
   final TextEditingController _messageController = TextEditingController();
 
   late final BannerAd _topBannerAd;
+  late final BannerAd _middleBannerAd1;
+  late final BannerAd _middleBannerAd2;
   late final BannerAd _bottomBannerAd;
+
   bool _isTopBannerAdLoaded = false;
+  bool _isMiddleBannerAd1Loaded = false;
+  bool _isMiddleBannerAd2Loaded = false;
   bool _isBottomBannerAdLoaded = false;
 
   @override
@@ -33,8 +38,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _loadBannerAds() {
+    final adUnitId = 'ca-app-pub-6721734106426198/3033200286';
+
     _topBannerAd = BannerAd(
-      adUnitId: 'ca-app-pub-6721734106426198/3033200286',
+      adUnitId: adUnitId,
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
@@ -46,8 +53,34 @@ class _MyAppState extends State<MyApp> {
       ),
     )..load();
 
+    _middleBannerAd1 = BannerAd(
+      adUnitId: adUnitId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) => setState(() => _isMiddleBannerAd1Loaded = true),
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('Middle banner 1 failed: $error');
+          ad.dispose();
+        },
+      ),
+    )..load();
+
+    _middleBannerAd2 = BannerAd(
+      adUnitId: adUnitId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) => setState(() => _isMiddleBannerAd2Loaded = true),
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('Middle banner 2 failed: $error');
+          ad.dispose();
+        },
+      ),
+    )..load();
+
     _bottomBannerAd = BannerAd(
-      adUnitId: 'ca-app-pub-6721734106426198/3033200286',
+      adUnitId: adUnitId,
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
@@ -114,6 +147,8 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     _topBannerAd.dispose();
+    _middleBannerAd1.dispose();
+    _middleBannerAd2.dispose();
     _bottomBannerAd.dispose();
     _phoneController.dispose();
     _messageController.dispose();
@@ -141,8 +176,8 @@ class _MyAppState extends State<MyApp> {
                 if (lang != null) _switchLanguage(lang);
               },
               items: const [
-                DropdownMenuItem(value: 'id', child: Text('???? ID')),
-                DropdownMenuItem(value: 'en', child: Text('???? EN')),
+                DropdownMenuItem(value: 'id', child: Text('🇮🇩 ID')),
+                DropdownMenuItem(value: 'en', child: Text('🇺🇸 EN')),
               ],
             )
           ],
@@ -151,44 +186,65 @@ class _MyAppState extends State<MyApp> {
           children: [
             if (_isTopBannerAdLoaded)
               SizedBox(height: 50, child: AdWidget(ad: _topBannerAd)),
+
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        labelText: t('enter_number'),
-                        hintText: t('example_number'),
-                        border: const OutlineInputBorder(),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          labelText: t('enter_number'),
+                          hintText: t('example_number'),
+                          border: const OutlineInputBorder(),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: _messageController,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        labelText: t('enter_message'),
-                        border: const OutlineInputBorder(),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: _messageController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          labelText: t('enter_message'),
+                          border: const OutlineInputBorder(),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green[700],
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 12),
+                      const SizedBox(height: 16),
+
+                      if (_isMiddleBannerAd1Loaded)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: SizedBox(
+                              height: 50,
+                              child: AdWidget(ad: _middleBannerAd1)),
+                        ),
+
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green[700],
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
+                        ),
+                        onPressed: _launchWA,
+                        icon: const Icon(Icons.send),
+                        label: Text(t('send_to_wa')),
                       ),
-                      onPressed: _launchWA,
-                      icon: const Icon(Icons.send),
-                      label: Text(t('send_to_wa')),
-                    ),
-                  ],
+
+                      if (_isMiddleBannerAd2Loaded)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: SizedBox(
+                              height: 50,
+                              child: AdWidget(ad: _middleBannerAd2)),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
+
             if (_isBottomBannerAdLoaded)
               SizedBox(height: 50, child: AdWidget(ad: _bottomBannerAd)),
           ],
