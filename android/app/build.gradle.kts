@@ -30,13 +30,17 @@ android {
         jvmTarget = "11"
     }
 
-    // Ambil dari GitHub Secrets melalui environment variable
+    // Menggunakan environment variable dari GitHub Actions
     signingConfigs {
         create("release") {
+            val storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+            val keyAlias = System.getenv("KEY_ALIAS") ?: ""
+            val keyPassword = System.getenv("KEY_PASSWORD") ?: ""
+
             storeFile = file("upload-keystore.jks")
-            storePassword = System.getenv("KEYSTORE_PASSWORD")
-            keyAlias = System.getenv("KEY_ALIAS")
-            keyPassword = System.getenv("KEY_PASSWORD")
+            this.storePassword = storePassword
+            this.keyAlias = keyAlias
+            this.keyPassword = keyPassword
         }
     }
 
@@ -50,8 +54,9 @@ android {
                 "proguard-rules.pro"
             )
         }
+
         debug {
-            // Optional: gunakan keystore yang sama untuk debug
+            // Optional: untuk testing dengan keystore yang sama
             signingConfig = signingConfigs.getByName("release")
         }
     }
