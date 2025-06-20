@@ -4,7 +4,7 @@ description: A simple Flutter app to send WA messages without saving number.
 # Aplikasi ini tidak diterbitkan ke pub.dev
 publish_to: 'none'
 
-# Versi aplikasi
+# Versi aplikasi (versi kode: +1)
 version: 1.0.0+1
 
 environment:
@@ -17,30 +17,29 @@ dependencies:
   # Ikon iOS-style
   cupertino_icons: ^1.0.2
 
-  # Google AdMob SDK untuk banner ads
+  # Google AdMob SDK
   google_mobile_ads: ^4.0.0
 
-  # Untuk membuka WhatsApp melalui URL intent
+  # Untuk membuka WhatsApp
   url_launcher: ^6.2.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # Linter untuk menjaga kualitas kode
+  # Linter untuk kualitas kode
   flutter_lints: ^3.0.0
 
-  # Untuk generate ikon aplikasi
+  # Untuk generate launcher icon
   flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
 
-  # Gambar ikon harus diletakkan di sini
   assets:
     - assets/icon.png
 
 flutter_icons:
   android: true
   ios: false
-  image_path: "assets/icon.png"
+  image_path: assets/icon.png

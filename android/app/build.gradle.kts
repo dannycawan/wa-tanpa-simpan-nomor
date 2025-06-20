@@ -30,12 +30,13 @@ android {
         jvmTarget = "11"
     }
 
+    // Ambil dari GitHub Secrets melalui environment variable
     signingConfigs {
         create("release") {
             storeFile = file("upload-keystore.jks")
-            storePassword = "pisanggorengQ@ramah123#"
-            keyAlias = "upload"
-            keyPassword = "pisanggorengQ@ramah123#"
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("KEY_ALIAS")
+            keyPassword = System.getenv("KEY_PASSWORD")
         }
     }
 
@@ -50,7 +51,7 @@ android {
             )
         }
         debug {
-            // Optional: untuk testing dengan keystore yang sama
+            // Optional: gunakan keystore yang sama untuk debug
             signingConfig = signingConfigs.getByName("release")
         }
     }

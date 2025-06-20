@@ -17,9 +17,15 @@ jobs:
         with:
           flutter-version: '3.22.1'  # Versi Flutter kamu
 
-      - run: flutter pub get
+      - name: Install dependencies
+        run: flutter pub get
 
-      - run: flutter pub run flutter_launcher_icons:main  # generate icon aplikasi
+      - name: Generate launcher icon
+        run: flutter pub run flutter_launcher_icons:main
+
+      - name: Decode keystore
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
 
       - name: Build AAB
         run: flutter build appbundle --release
