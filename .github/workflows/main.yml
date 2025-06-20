@@ -4,36 +4,72 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
   build:
     name: Build AAB
     runs-on: ubuntu-latest
 
+    env:
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Important for Flutter version checking
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.1'  # Versi Flutter kamu
+          flutter-version: '3.22.1'
+          channel: 'stable'
+          cache: true
+          cache-key: flutter-pub-cache
 
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          flutter pub run flutter_launcher_icons:main
 
-      - name: Generate launcher icon
-        run: flutter pub run flutter_launcher_icons:main
+      - name: Verify Flutter version
+        run: flutter --version
 
-      - name: Decode keystore from secret
+      - name: Decode and secure keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/upload-keystore.jks
+          chmod 600 android/app/upload-keystore.jks  # Restrict permissions
 
       - name: Build AAB
-        run: flutter build appbundle --release
+        run: |
+          flutter clean
+          flutter build appbundle --release --verbose
+          ls -la build/app/outputs/bundle/release/  # Verify output
 
-      - name: Upload AAB
+      - name: Verify AAB
+        run: |
+          file build/app/outputs/bundle/release/app-release.aab
+          ls -lh build/app/outputs/bundle/release/app-release.aab
+
+      - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-aab
+          name: app-release-${{ github.run_number }}.aab
           path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 7
+
+      - name: Upload build logs
+        if: always()  # Upload logs even if build fails
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-${{ github.run_number }}.txt
+          path: flutter_build.log
