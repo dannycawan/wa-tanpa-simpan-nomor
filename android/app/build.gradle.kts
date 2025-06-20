@@ -10,18 +10,8 @@ val flutterVersionName = "1.0.0"
 
 android {
     namespace = "com.wa.tanpa.simpan.nomor"
-
     compileSdk = 34
-    ndkVersion = "27.0.12077973" // ✅ UPDATE SESUAI PERMINTAAN BUILDER
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
+    ndkVersion = "27.0.12077973"
 
     defaultConfig {
         applicationId = "com.wa.tanpa.simpan.nomor"
@@ -31,16 +21,40 @@ android {
         versionName = flutterVersionName
     }
 
-    buildTypes {
-        release {
-            // Ganti ini jika nanti sudah punya signing config production
-            signingConfig = signingConfigs.getByName("debug")
-            isMinifyEnabled = false
-            isShrinkResources = false
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("upload-keystore.jks")
+            storePassword = "pisanggorengQ@ramah123#"
+            keyAlias = "upload"
+            keyPassword = "pisanggorengQ@ramah123#"
         }
     }
 
-    // Opsional: mencegah error pada Android 12+ (jika pakai intent WA)
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            // Optional: untuk testing dengan keystore yang sama
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
